@@ -30,11 +30,15 @@ def actualizeaza_conturi(tip, suma, cont):
         conturi[cont] -= suma
     salveaza_conturi(conturi)
 
-# === Functii pentru tranzactii ===
+
 def incarca_tranzactii():
-    if not os.path.exists(FILE_NAME):
-        return pd.DataFrame(columns=["data", "tip", "suma", "cont", "categorie", "descriere"])
+    if not os.path.exists(FILE_NAME) or os.path.getsize(FILE_NAME) == 0:
+        # dacă fișierul lipsește sau e gol → creăm unul cu headere
+        cols = ["data", "tip", "suma", "cont", "categorie", "descriere"]
+        pd.DataFrame(columns=cols).to_csv(FILE_NAME, index=False)
+        return pd.DataFrame(columns=cols)
     return pd.read_csv(FILE_NAME)
+
 
 def adauga_tranzactie(tip, suma, cont, categorie, descriere=""):
     data = datetime.date.today().isoformat()
